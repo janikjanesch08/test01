@@ -35,7 +35,7 @@ jobs:
           
           # Git-Pull direkt auf dem Server ausführen
           ssh -i private_key.pem -o StrictHostKeyChecking=no ubuntu@ec2-54-167-25-174.compute-1.amazonaws.com << 'EOF'
-            cd /test01
+            cd ~/test01
             git reset --hard  # Falls es Änderungen gibt
             git pull origin main
             sudo chmod -R 777 /var/www/html  # Rechte setzen
