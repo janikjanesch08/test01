@@ -38,7 +38,7 @@ jobs:
             cd ~/test01
             git reset --hard  # Falls es Änderungen gibt
             git pull origin main
-            sudo chmod -R 777 /var/www/html  # Rechte setzen
+            sudo chmod -R 777 ~/test01  # Rechte setzen
           EOF
           
           # SSH Key löschen
