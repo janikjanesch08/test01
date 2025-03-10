@@ -1,0 +1,45 @@
+
+name: Deploy PHP HTML Site
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: httpd:latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Upload Website Files
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: .  # Das gesamte Repository hochladen
+
+      - name: Download Website Files
+        uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: .
+
+      - name: Deploy to Server
+        env:
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          # SSH Key speichern
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > private_key.pem
+          chmod 600 private_key.pem
+          
+          # Git-Pull direkt auf dem Server ausführen
+          ssh -i private_key.pem -o StrictHostKeyChecking=no ec2-54-167-25-174.compute-1.amazonaws.com << 'EOF'
+            cd /var/www/html
+            git reset --hard  # Falls es Änderungen gibt
+            git pull origin main
+            sudo chmod -R 777 /var/www/html  # Rechte setzen
+          EOF
+          
+          # SSH Key löschen
+          rm private_key.pem
